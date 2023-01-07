@@ -3,7 +3,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../models/contacts.js');
 // const { validateBody } = require('../../middlewares');
-const { addContactSchema } = require('../../schemas/contacts');
+const {
+  addContactSchema,
+  putContactSchema,
+} = require('../../schemas/contacts');
 
 router.get('/', async (req, res, next) => {
   const contacts = await db.listContacts();
@@ -31,11 +34,27 @@ router.post('/', async (req, res, next) => {
 });
 
 router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' });
+  const { contactId } = req.params;
+  const contact = await db.removeContact(contactId);
+
+  if (!contact) {
+    return res.status(404).json({ message: 'Not found' });
+  }
+  res.status(200).json({ message: 'contact deleted' });
 });
 
 router.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' });
+  const { error } = putContactSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.message });
+  }
+  const { contactId } = req.params;
+  const contact = await db.updateContact(contactId, req.body);
+
+  if (!contact) {
+    return res.status(404).json({ message: 'Not found' });
+  }
+  res.status(201).json(contact);
 });
 
 module.exports = router;

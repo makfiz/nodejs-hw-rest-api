@@ -25,7 +25,8 @@ const listContacts = async () => {
 const getContactById = async contactId => {
   try {
     const contacts = await readDb();
-    return contacts.find(contact => contact.id === contactId);
+    const contact = contacts.find(contact => contact.id === contactId);
+    return contact || null;
   } catch (err) {
     console.log(err);
   }
@@ -64,7 +65,7 @@ const updateContact = async (contactId, body) => {
   try {
     const contacts = await readDb();
     const { name, email, phone } = body;
-
+    let updatedСontact;
     contacts.forEach(contact => {
       if (contact.id === contactId) {
         if (name) {
@@ -76,10 +77,12 @@ const updateContact = async (contactId, body) => {
         if (phone) {
           contact.phone = phone;
         }
+        updatedСontact = contact;
+        return updatedСontact;
       }
     });
-
     await writeDb(contacts);
+    return updatedСontact;
   } catch (err) {
     console.log(err);
   }
