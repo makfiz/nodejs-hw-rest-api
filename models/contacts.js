@@ -78,7 +78,6 @@ const updateContact = async (contactId, body) => {
           contact.phone = phone;
         }
         updatedСontact = contact;
-        return updatedСontact;
       }
     });
     await writeDb(contacts);
