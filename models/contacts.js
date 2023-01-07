@@ -2,7 +2,7 @@ const fs = require('fs/promises');
 const path = require('path');
 const shortid = require('shortid');
 
-const contactsPath = path.resolve(__dirname, 'models/contacts.json');
+const contactsPath = path.resolve(__dirname, 'contacts.json');
 
 const readDb = async () => {
   const db = await fs.readFile(contactsPath);
@@ -10,7 +10,7 @@ const readDb = async () => {
   return contacts;
 };
 
-const writeDB = async data => {
+const writeDb = async data => {
   await fs.writeFile(contactsPath, JSON.stringify(data, null, 2));
 };
 
@@ -35,7 +35,7 @@ const removeContact = async contactId => {
   try {
     const contacts = await readDb();
     const newContacts = contacts.filter(contact => contact.id !== contactId);
-    await writeDB(newContacts);
+    await writeDb(newContacts);
   } catch (err) {
     console.log(err);
   }
@@ -45,13 +45,16 @@ const addContact = async body => {
   try {
     const { name, email, phone } = body;
     const contacts = await readDb();
-    contacts.push({
+    const newContact = {
       id: `${shortid.generate()}`,
       name,
       email,
       phone,
-    });
-    await writeDB(contacts);
+    };
+
+    contacts.push(newContact);
+    await writeDb(contacts);
+    return newContact;
   } catch (err) {
     console.log(err);
   }
@@ -76,7 +79,7 @@ const updateContact = async (contactId, body) => {
       }
     });
 
-    await writeDB(contacts);
+    await writeDb(contacts);
   } catch (err) {
     console.log(err);
   }
