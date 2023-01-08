@@ -15,76 +15,54 @@ const writeDb = async data => {
 };
 
 const listContacts = async () => {
-  try {
-    return await readDb();
-  } catch (err) {
-    console.log(err);
-  }
+  return await readDb();
 };
 
 const getContactById = async contactId => {
-  try {
-    const contacts = await readDb();
-    const contact = contacts.find(contact => contact.id === contactId);
-    return contact || null;
-  } catch (err) {
-    console.log(err);
-  }
+  const contacts = await readDb();
+  const contact = contacts.find(contact => contact.id === contactId);
+  return contact || null;
 };
 
 const removeContact = async contactId => {
-  try {
-    const contacts = await readDb();
-    const newContacts = contacts.filter(contact => contact.id !== contactId);
-    await writeDb(newContacts);
-  } catch (err) {
-    console.log(err);
-  }
+  const contacts = await readDb();
+  const updatedDb = contacts.filter(contact => contact.id !== contactId);
+  await writeDb(updatedDb);
 };
 
 const addContact = async body => {
-  try {
-    const { name, email, phone } = body;
-    const contacts = await readDb();
-    const newContact = {
-      id: `${shortid.generate()}`,
-      name,
-      email,
-      phone,
-    };
+  const { name, email, phone } = body;
+  const contacts = await readDb();
+  const newContact = {
+    id: `${shortid.generate()}`,
+    name,
+    email,
+    phone,
+  };
 
-    contacts.push(newContact);
-    await writeDb(contacts);
-    return newContact;
-  } catch (err) {
-    console.log(err);
-  }
+  contacts.push(newContact);
+  await writeDb(contacts);
+  return newContact;
 };
 
 const updateContact = async (contactId, body) => {
-  try {
-    const contacts = await readDb();
-    const { name, email, phone } = body;
-    let updatedСontact;
-    contacts.forEach(contact => {
-      if (contact.id === contactId) {
-        if (name) {
-          contact.name = name;
-        }
-        if (email) {
-          contact.email = email;
-        }
-        if (phone) {
-          contact.phone = phone;
-        }
-        updatedСontact = contact;
-      }
-    });
-    await writeDb(contacts);
-    return updatedСontact;
-  } catch (err) {
-    console.log(err);
+  const contacts = await readDb();
+  const { name, email, phone } = body;
+
+  const [updatedContact] = contacts.filter(contact => contact.id === contactId);
+
+  if (name) {
+    updatedContact.name = name;
   }
+  if (email) {
+    updatedContact.email = email;
+  }
+  if (phone) {
+    updatedContact.phone = phone;
+  }
+
+  await writeDb(contacts);
+  return updatedContact;
 };
 
 module.exports = {

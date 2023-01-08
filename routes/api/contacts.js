@@ -1,60 +1,31 @@
 const express = require('express');
 
 const router = express.Router();
-const db = require('../../models/contacts.js');
-// const { validateBody } = require('../../middlewares');
+
+const { validateBody } = require('../../middlewares');
+const { tryCatchWrapper } = require('../../helpers');
+const controllers = require('../../controllers/contacts.controller');
 const {
   addContactSchema,
   putContactSchema,
 } = require('../../schemas/contacts');
 
-router.get('/', async (req, res, next) => {
-  const contacts = await db.listContacts();
-  res.status(200).json(contacts);
-});
+router.get('/', tryCatchWrapper(controllers.getContacts));
 
-router.get('/:contactId', async (req, res, next) => {
-  const { contactId } = req.params;
-  const contact = await db.getContactById(contactId);
+router.get('/:contactId', tryCatchWrapper(controllers.getContactById));
 
-  if (!contact) {
-    return res.status(404).json({ message: 'Not found' });
-  }
-  return res.status(200).json(contact);
-});
+router.post(
+  '/',
+  validateBody(addContactSchema),
+  tryCatchWrapper(controllers.postContact)
+);
 
-router.post('/', async (req, res, next) => {
-  const { error } = addContactSchema.validate(req.body);
-  if (error) {
-    return res.status(400).json({ message: error.message });
-  }
+router.delete('/:contactId', tryCatchWrapper(controllers.deleteContact));
 
-  const newContact = await db.addContact(req.body);
-  res.status(201).json(newContact);
-});
-
-router.delete('/:contactId', async (req, res, next) => {
-  const { contactId } = req.params;
-  const contact = await db.removeContact(contactId);
-
-  if (!contact) {
-    return res.status(404).json({ message: 'Not found' });
-  }
-  res.status(200).json({ message: 'contact deleted' });
-});
-
-router.put('/:contactId', async (req, res, next) => {
-  const { error } = putContactSchema.validate(req.body);
-  if (error) {
-    return res.status(400).json({ message: error.message });
-  }
-  const { contactId } = req.params;
-  const contact = await db.updateContact(contactId, req.body);
-
-  if (!contact) {
-    return res.status(404).json({ message: 'Not found' });
-  }
-  res.status(201).json(contact);
-});
+router.put(
+  '/:contactId',
+  validateBody(putContactSchema),
+  tryCatchWrapper(controllers.putContact)
+);
 
 module.exports = router;
