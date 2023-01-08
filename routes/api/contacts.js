@@ -1,25 +1,31 @@
-const express = require('express')
+const express = require('express');
 
-const router = express.Router()
+const router = express.Router();
 
-router.get('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+const { validateBody } = require('../../middlewares');
+const { tryCatchWrapper } = require('../../helpers');
+const controllers = require('../../controllers/contacts.controller');
+const {
+  addContactSchema,
+  putContactSchema,
+} = require('../../schemas/contacts');
 
-router.get('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get('/', tryCatchWrapper(controllers.getContacts));
 
-router.post('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get('/:contactId', tryCatchWrapper(controllers.getContactById));
 
-router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.post(
+  '/',
+  validateBody(addContactSchema),
+  tryCatchWrapper(controllers.postContact)
+);
 
-router.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.delete('/:contactId', tryCatchWrapper(controllers.deleteContact));
 
-module.exports = router
+router.put(
+  '/:contactId',
+  validateBody(putContactSchema),
+  tryCatchWrapper(controllers.putContact)
+);
+
+module.exports = router;
