@@ -28,4 +28,6 @@ router.put(
   tryCatchWrapper(controllers.putContact)
 );
 
+router.get('/:contactId/favorite', tryCatchWrapper(controllers));
+
 module.exports = router;
