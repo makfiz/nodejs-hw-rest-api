@@ -3,11 +3,6 @@ function tryCatchWrapper(Fn) {
     try {
       await Fn(req, res, next);
     } catch (error) {
-      if (error.message.includes("Cast to ObjectId failed for value")) {
-        return res.status(404).json({
-          message: "Not found",
-        });
-      }
       return next(error);
     }
   };

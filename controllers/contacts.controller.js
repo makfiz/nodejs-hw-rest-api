@@ -1,7 +1,7 @@
 const { dbContacts } = require('../models/contacts.js');
 
 async function getContacts(req, res, next) {
-  const { limit } = req.query;
+  const { limit = 10 } = req.query;
   const contacts = await dbContacts.find({}).limit(limit);
   return res.status(200).json(contacts);
 }
@@ -26,16 +26,22 @@ async function postContact(req, res, next) {
 
 async function putContact(req, res, next) {
   const { contactId } = req.params;
-  await dbContacts.findByIdAndUpdate(contactId, req.body);
-  const contact = await dbContacts.findById(contactId);
-  return res.status(200).json(contact);
+  const updatedContact = await dbContacts.findByIdAndUpdate(
+    contactId,
+    req.body,
+    { new: true }
+  );
+  return res.status(200).json(updatedContact);
 }
 
 async function updateStatusContact(req, res, next) {
   const { contactId } = req.params;
-  await dbContacts.findByIdAndUpdate(contactId, req.body);
-  const contact = await dbContacts.findById(contactId);
-  return res.status(200).json(contact);
+  const updatedContact = await dbContacts.findByIdAndUpdate(
+    contactId,
+    req.body,
+    { new: true }
+  );
+  return res.status(200).json(updatedContact);
 }
 
 module.exports = {
