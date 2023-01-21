@@ -52,7 +52,30 @@ async function login(req, res, next) {
   });
 }
 
+async function logout(req, res, next) {
+  const user = req.user;
+  if (!user) {
+    throw Unauthorized('Not authorized');
+  }
+  await dbUsers.findByIdAndUpdate(user._id, { token: null });
+  return res.status(204).end();
+}
+
+async function current(req, res, next) {
+  const user = req.user;
+  if (!user) {
+    throw Unauthorized('Not authorized');
+  }
+
+  return res.status(200).json({
+    email: user.email,
+    subscription: user.subscription,
+  });
+}
+
 module.exports = {
   signUp,
   login,
+  logout,
+  current,
 };

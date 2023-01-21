@@ -1,6 +1,7 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const schema = mongoose.Schema({
+const schema = mongoose.Schema(
+  {
     password: {
       type: String,
       required: [true, 'Password is required'],
@@ -12,17 +13,21 @@ const schema = mongoose.Schema({
     },
     subscription: {
       type: String,
-      enum: ["starter", "pro", "business"],
-      default: "starter"
+      enum: ['starter', 'pro', 'business'],
+      default: 'starter',
     },
     token: {
       type: String,
       default: null,
     },
-  })
+  },
+  {
+    versionKey: false,
+  }
+);
 
-const dbUsers  = mongoose.model("users", schema);
+const dbUsers = mongoose.model('users', schema);
 
 module.exports = {
-    dbUsers
+  dbUsers,
 };
