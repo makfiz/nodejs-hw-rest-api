@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const schema = mongoose.Schema(  {
+  
   name: {
     type: String,
     required: [true, 'Set name for contact'],
@@ -15,10 +16,15 @@ const schema = mongoose.Schema(  {
     type: Boolean,
     default: false,
   },
-  
+  owner: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: 'user',
+  }
 },{
   versionKey: false
+  
 })
+
 
 const dbContacts  = mongoose.model("contacts", schema);
 module.exports = {
