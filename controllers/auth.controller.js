@@ -40,7 +40,7 @@ async function login(req, res, next) {
     throw Unauthorized('Password is wrong');
   }
   const payload = { id: user._id };
-  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '120s' });
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '8h' });
 
   await dbUsers.findByIdAndUpdate(user._id, { token });
   return res.status(200).json({

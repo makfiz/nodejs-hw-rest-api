@@ -3,10 +3,12 @@ const { dbContacts } = require('../models/contacts.js');
 async function getContacts(req, res, next) {
   const { limit = 5, page = 1 } = req.query;
   const skip = (page - 1) * limit;
-  const { user } = req;
-  const { id: movieId } = req.body;
+  const { _id } = req;
 
-  const contacts = await dbContacts.find({}).skip(skip).limit(limit);
+  const contacts = await dbContacts
+    .find({ owner: _id })
+    .skip(skip)
+    .limit(limit);
   return res.status(200).json(contacts);
 }
 
@@ -24,7 +26,8 @@ async function deleteContact(req, res, next) {
 }
 
 async function postContact(req, res, next) {
-  const newContact = await dbContacts.create(req.body);
+  const { _id } = req.user;
+  const newContact = await dbContacts.create({ ...req.body, owner: _id });
   return res.status(201).json(newContact);
 }
 
