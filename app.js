@@ -28,11 +28,11 @@ app.use((err, req, res, next) => {
     });
   }
 
-  // if (err.message.includes('users validation failed')) {
-  //   return res.status(400).json({
-  //     message: err.message,
-  //   });
-  // }
+  if (err.message.includes('duplicate key error collection')) {
+    return res.status(409).json({
+      message: err.message,
+    });
+  }
 
   if (err.status) {
     return res.status(err.status).json({

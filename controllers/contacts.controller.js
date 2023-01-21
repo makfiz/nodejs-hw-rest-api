@@ -1,8 +1,12 @@
 const { dbContacts } = require('../models/contacts.js');
 
 async function getContacts(req, res, next) {
-  const { limit = 10 } = req.query;
-  const contacts = await dbContacts.find({}).limit(limit);
+  const { limit = 5, page = 1 } = req.query;
+  const skip = (page - 1) * limit;
+  const { user } = req;
+  const { id: movieId } = req.body;
+
+  const contacts = await dbContacts.find({}).skip(skip).limit(limit);
   return res.status(200).json(contacts);
 }
 
