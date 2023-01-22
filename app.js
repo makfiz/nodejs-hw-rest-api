@@ -21,7 +21,7 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  console.log(err.message)
+  console.log(err.message);
   if (err.message.includes('Cast to ObjectId failed for value')) {
     return res.status(404).json({
       message: 'Not found',
@@ -34,15 +34,9 @@ app.use((err, req, res, next) => {
     });
   }
 
-  if (err.status) {
-    return res.status(err.status).json({
-      message: err.message,
-    });
-  }
-
-  return res.status(500).json({
-    message: 'Internal server error',
-  });
+  return res
+    .status(err.status || 500)
+    .json({ message: err.message || 'Internal server error' });
 });
 
 module.exports = app;

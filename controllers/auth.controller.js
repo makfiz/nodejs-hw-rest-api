@@ -35,8 +35,8 @@ async function login(req, res, next) {
   if (!user) {
     throw Unauthorized('Email is wrong');
   }
-  const isTheSame = await bcrypt.compare(password, user.password);
-  if (!isTheSame) {
+  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+  if (!isPasswordCorrect) {
     throw Unauthorized('Password is wrong');
   }
   const payload = { id: user._id };
