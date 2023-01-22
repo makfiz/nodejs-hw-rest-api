@@ -73,9 +73,24 @@ async function current(req, res, next) {
   });
 }
 
+async function updateUserSubscription(req, res, next) {
+  const user = req.user;
+  if (!user) {
+    throw Unauthorized('Not authorized');
+  }
+  const { subscription } = req.body;
+  await dbUsers.findByIdAndUpdate(user._id, { subscription });
+
+  return res.status(200).json({
+    email: user.email,
+    subscription,
+  });
+}
+
 module.exports = {
   signUp,
   login,
   logout,
   current,
+  updateUserSubscription,
 };
