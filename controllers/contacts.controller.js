@@ -1,8 +1,13 @@
 const { dbContacts } = require('../models/contacts.js');
 
 async function getContacts(req, res, next) {
-  const { limit = 10 } = req.query;
-  const contacts = await dbContacts.find({}).limit(limit);
+  const { limit = 20, page = 1, favorite = false } = req.query;
+  const skip = (page - 1) * limit;
+  const { _id } = req.user;
+  const isTheFavorite = favorite
+    ? { owner: _id, favorite: true }
+    : { owner: _id };
+  const contacts = await dbContacts.find(isTheFavorite).skip(skip).limit(limit);
   return res.status(200).json(contacts);
 }
 
@@ -20,7 +25,8 @@ async function deleteContact(req, res, next) {
 }
 
 async function postContact(req, res, next) {
-  const newContact = await dbContacts.create(req.body);
+  const { _id } = req.user;
+  const newContact = await dbContacts.create({ ...req.body, owner: _id });
   return res.status(201).json(newContact);
 }
 
