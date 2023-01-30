@@ -8,6 +8,14 @@ const userSchema = Joi.object({
     'any.required': 'missing required password field !!',
   }),
 });
+
+const userSubscriptionSchema = Joi.object({
+  subscription: Joi.string().valid('starter', 'pro', 'business').required()
+});
+
+
+
 module.exports = {
   userSchema,
+  userSubscriptionSchema,
 };

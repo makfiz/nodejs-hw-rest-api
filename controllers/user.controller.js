@@ -2,6 +2,10 @@ const { dbUsers } = require('../models/user');
 const { Conflict, Unauthorized } = require('http-errors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const gravatar = require('gravatar');
+const path = require("path");
+const fs = require("fs/promises");
+const jimp = require('jimp');
 
 const { JWT_SECRET } = require('../config');
 
@@ -17,12 +21,14 @@ async function signUp(req, res, next) {
   const savedUser = await dbUsers.create({
     email,
     password: hashedPassword,
+    avatarURL:gravatar.url(email, {protocol: 'https'}),
   });
 
   return res.status(201).json({
     user: {
       email,
       subscription: savedUser.subscription,
+     
     },
   });
 }
@@ -87,10 +93,43 @@ async function updateUserSubscription(req, res, next) {
   });
 }
 
+async function updateUserAvatar(req, res, next) {
+  let user = req.user;
+  if (!user) {
+    throw Unauthorized('Not authorized');
+  }
+  const { filename } = req.file;
+  const tmpPath = path.resolve(__dirname, "../tmp", filename);
+  const publicPath = path.resolve(__dirname, "../public/avatars", filename)
+
+  
+  jimp.read(tmpPath)
+  .then(avatar => {
+    return avatar
+      .resize(250, 250) 
+      .write(publicPath); 
+  })
+  .catch(err => {
+    throw err
+  });
+  
+  await fs.unlink(tmpPath);
+  
+  user =  await dbUsers.findById(user.id)
+  user.avatarURL = `/avatars/${filename}`
+  await user.save()
+ 
+ 
+  return res.status(200).json({
+    avatarURL: `/avatars/${filename}`,
+  });
+}
+
 module.exports = {
   signUp,
   login,
   logout,
   current,
   updateUserSubscription,
+  updateUserAvatar,
 };

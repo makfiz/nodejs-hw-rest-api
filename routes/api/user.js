@@ -6,11 +6,12 @@ const {
   logout,
   current,
   updateUserSubscription,
-} = require('../../controllers/auth.controller');
+  updateUserAvatar,
+} = require('../../controllers/user.controller');
 const { tryCatchWrapper } = require('../../helpers');
-const { validateBody, auth } = require('../../middlewares');
+const { validateBody, auth, upload } = require('../../middlewares');
 
-const { userSchema } = require('../../schemas/user');
+const { userSchema, userSubscriptionSchema } = require('../../schemas/user');
 
 const router = express.Router();
 
@@ -19,9 +20,14 @@ router.post('/login', validateBody(userSchema), tryCatchWrapper(login));
 router.get('/logout', tryCatchWrapper(auth), tryCatchWrapper(logout));
 router.get('/current', tryCatchWrapper(auth), tryCatchWrapper(current));
 router.patch(
-  '/',
+  '/', validateBody(userSubscriptionSchema),
   tryCatchWrapper(auth),
   tryCatchWrapper(updateUserSubscription)
+);
+router.patch(
+  '/avatars', tryCatchWrapper(auth), 
+  tryCatchWrapper(upload.single("avatar")),
+  tryCatchWrapper(updateUserAvatar)
 );
 
 module.exports = router;
