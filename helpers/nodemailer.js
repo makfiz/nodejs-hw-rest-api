@@ -18,7 +18,7 @@ async function verificationTokenSender(email, verificationToken) {
     to: email,
     subject: 'email verification',
     text: `Hello, to verify your mail, follow the link: api/users/verify/${verificationToken}`,
-    html: `<b>Hello, to verify your mail, follow the link: api/users/verify/${verificationToken}<b/>`,
+    html: `<b>Hello, to verify your mail, follow the <a href=api/users/verify/${verificationToken}>link</a><b/>`,
   };
 
   const transporter = nodemailer.createTransport(config);
