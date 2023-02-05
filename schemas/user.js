@@ -10,12 +10,17 @@ const userSchema = Joi.object({
 });
 
 const userSubscriptionSchema = Joi.object({
-  subscription: Joi.string().valid('starter', 'pro', 'business').required()
+  subscription: Joi.string().valid('starter', 'pro', 'business').required(),
 });
 
-
+const userEmailVerifySchema = Joi.object({
+  email: Joi.string().email().required().messages({
+    'any.required': 'missing required email field !!',
+  }),
+});
 
 module.exports = {
   userSchema,
   userSubscriptionSchema,
+  userEmailVerifySchema,
 };

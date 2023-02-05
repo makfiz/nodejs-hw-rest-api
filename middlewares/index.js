@@ -1,9 +1,10 @@
 const jwt = require('jsonwebtoken');
 const { BadRequest, Unauthorized } = require('http-errors');
-const path = require("path");
-// const fs = require("fs/promises");
-const multer = require("multer");
+const path = require('path');
+
+const multer = require('multer');
 const { dbUsers } = require('../models/user');
+
 const { JWT_SECRET } = require('../config');
 
 function validateBody(schema) {
@@ -49,7 +50,7 @@ async function auth(req, res, next) {
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.resolve(__dirname, "../tmp"));
+    cb(null, path.resolve(__dirname, '../tmp'));
   },
   filename: function (req, file, cb) {
     cb(null, req.user._id + file.originalname);

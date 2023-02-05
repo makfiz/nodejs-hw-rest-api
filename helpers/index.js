@@ -1,3 +1,5 @@
+const { verificationTokenSender } = require('./nodemailer');
+
 function tryCatchWrapper(Fn) {
   return async (req, res, next) => {
     try {
@@ -8,7 +10,7 @@ function tryCatchWrapper(Fn) {
   };
 }
 
-
 module.exports = {
   tryCatchWrapper,
+  verificationTokenSender,
 };
